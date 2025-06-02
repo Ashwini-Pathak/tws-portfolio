@@ -27,7 +27,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           sonar-scanner \
-            -Dsonar.projectKey=ashwiniap_tws-portfolio \
+            -Dsonar.projectKey=tws-portfolio \
             -Dsonar.organization=ashwini-pathak \
             -Dsonar.sources=. \
             -Dsonar.host.url=https://sonarcloud.io \
@@ -39,7 +39,7 @@ jobs:
     needs: sonarcloud
 
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Configure AWS Credentials
