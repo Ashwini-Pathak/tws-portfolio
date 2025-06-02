@@ -1,23 +1,54 @@
-name: Portfolio Deployment
+name: Portfolio Deployment and SonarQube Analysis
 
 on:
   push:
     branches:
-    - main
+      - main
 
 jobs:
-  build-and-deploy:
+  sonarqube:
+    name: Analyze with SonarQube
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@v1
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # adjust if needed
 
-    - name: Deploy static site to S3 bucket
-      run: aws s3 sync . s3://sonar-ashw --delete
+      - name: Install SonarQube Scanner
+        run: npm install -g sonar-scanner
+
+      - name: Run SonarQube Scanner
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=my-frontend-app \
+            -Dsonar.projectName=My-Frontend-App \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.login=$SONAR_TOKEN
+
+  deploy:
+    name: Deploy to S3
+    runs-on: ubuntu-latest
+    needs: sonarqube  # ensures SonarQube analysis runs first
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy static site to S3 bucket
+        run: aws s3 sync . s3://sonar-ashw --delete
