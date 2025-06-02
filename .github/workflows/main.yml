@@ -24,11 +24,7 @@ jobs:
 
       name: SonarQube Code Analysis
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+
 
 jobs:
   sonarqube:
