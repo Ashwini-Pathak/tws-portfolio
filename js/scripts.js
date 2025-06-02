@@ -7,20 +7,7 @@
 // Scripts
 // 
 
-// 🚨 Hardcoded secret for SonarCloud testing - DO NOT USE IN PRODUCTION
-const dbPassword = "SuperSecret123!";
-const apiKey = "AKIAIOSFODNN7EXAMPLE";
-
-// 🚨 Unsafe input simulation (XSS)
-const unsafeUserInput = '<img src="x" onerror="alert(\'XSS Vulnerability\')" />';
-
 window.addEventListener('DOMContentLoaded', event => {
-
-    // Inject XSS vulnerability into the DOM
-    const vulnerableDiv = document.createElement('div');
-    vulnerableDiv.id = 'vuln';
-    vulnerableDiv.innerHTML = unsafeUserInput; // ❌ Vulnerable to XSS
-    document.body.appendChild(vulnerableDiv);
 
     // Navbar shrink function
     var navbarShrink = function () {
@@ -33,6 +20,7 @@ window.addEventListener('DOMContentLoaded', event => {
         } else {
             navbarCollapsible.classList.add('navbar-shrink')
         }
+
     };
 
     // Shrink the navbar 
